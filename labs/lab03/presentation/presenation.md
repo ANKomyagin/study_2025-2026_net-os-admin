@@ -1,26 +1,38 @@
 ---
-## Front matter
+---
+# Front matter
 lang: ru-RU
-title: Лабораторная №3
-subtitle: Администрирование сетевых подсистем
-  - Жибицкая Е.Д.
+title: "Лабораторная №3"
+subtitle: 
+  - "Администрирование сетевых подсистем"
+  - "Комягин А.Н."
 institute:
-  - Российский университет дружбы народов, Москва, Россия
+  - "Российский университет дружбы народов, Москва, Россия"
 
-
-## i18n babel
+# i18n babel
 babel-lang: russian
 babel-otherlangs: english
 
-## Formatting pdf
+# Formatting pdf
 toc: false
-toc-title: Содержание
+toc-title: "Содержание"
 slide_level: 2
 aspectratio: 169
 section-titles: true
-theme: metropolis
-header-includes:
- - \metroset{progressbar=frametitle,sectionpage=progressbar,numbering=fraction}
+
+# Standard theme and fonts
+documentclass: beamer
+theme: "default"
+
+# Fonts 
+mainfont: "Times New Roman"
+sansfont: "Times New Roman"
+monofont: "Courier New"
+mathfont: "Latin Modern Math"
+
+# Header includes:
+header-includes: []
+
 ---
 
 
@@ -38,11 +50,11 @@ header-includes:
 ## Подготовка
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
-![Запуск ОС](image/1.jpg)
+![Запуск ОС](image/1.png)
 :::
 ::: {.column width="50%"}
 
-![Установка Kea](image/2.jpg)
+![Установка Kea](image/2.png)
 
 :::
 ::::::::::::::
@@ -55,7 +67,7 @@ header-includes:
 :::
 ::: {.column width="50%"}
 
-![Domain-name](image/3.jpg)
+![Domain-name](image/3.png)
 :::
 ::::::::::::::
 
@@ -63,11 +75,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Domain-name-servers](image/4.jpg)
+![Domain-name-servers](image/4.png)
 :::
 ::: {.column width="50%"}
 
-![Subnet4](image/5.jpg)
+![Subnet4](image/5.png)
 :::
 ::::::::::::::
 
@@ -79,7 +91,7 @@ header-includes:
 :::
 ::: {.column width="50%"}
 
-![Перезапуск dhcp](image/6.jpg)
+![Перезапуск dhcp](image/6.png)
 :::
 ::::::::::::::
 
@@ -88,11 +100,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Файл прямой DNS-зоны](image/7.jpg)
+![Файл прямой DNS-зоны](image/7.png)
 :::
 ::: {.column width="50%"}
 
-![Файл обратной DNS-зоны](image/8.jpg)
+![Файл обратной DNS-зоны](image/8.png)
 :::
 ::::::::::::::
 
@@ -101,7 +113,7 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Обращение к DHCP-серверу по имени](image/9.jpg)
+![Обращение к DHCP-серверу по имени](image/9.png)
 :::
 ::: {.column width="50%"}
 
@@ -116,7 +128,7 @@ header-includes:
 :::
 ::: {.column width="50%"}
 
-![firewall-cmd --get-services](image/10.jpg)
+![firewall-cmd --get-services](image/10.png)
 :::
 ::::::::::::::
 
@@ -124,11 +136,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Добавление dhcp](image/11.jpg)
+![Добавление dhcp](image/11.png)
 :::
 ::: {.column width="50%"}
 
-![Восстановление контекста безопасности](image/12.jpg)
+![Восстановление контекста безопасности](image/12.png)
 
 :::
 ::::::::::::::
@@ -145,11 +157,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Файл 01-routing.sh](image/14.jpg)
+![Файл 01-routing.sh](image/14.png)
 :::
 ::: {.column width="50%"}
 
-![Vagrantfile](image/15.jpg)
+![Vagrantfile](image/15.png)
 
 :::
 ::::::::::::::
@@ -161,7 +173,7 @@ header-includes:
 :::
 ::: {.column width="50%"}
 
-![Запуск client](image/16.jpg)
+![Запуск client](image/16.png)
 
 :::
 ::::::::::::::
@@ -170,11 +182,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Интерфейсы](image/17.jpg)
+![Интерфейсы](image/17.png)
 :::
 ::: {.column width="50%"}
 
-![Выданные адреса](image/18.jpg)
+![Выданные адреса](image/18.png)
 
 :::
 ::::::::::::::
@@ -183,11 +195,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Создание ключа](image/19.jpg)
+![Создание ключа](image/19.png)
 :::
 ::: {.column width="50%"}
 
-![Права доступа](image/20.jpg)
+![Права доступа](image/20.png)
 
 :::
 ::::::::::::::
@@ -197,11 +209,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="45%"}
 
-![Подключение в файле](image/21.jpg)
+![Подключение в файле](image/21.png)
 :::
 ::: {.column width="50%"}
 
-![Разрешение обновления](image/22.jpg)
+![Разрешение обновления](image/22.png)
 :::
 ::::::::::::::
 
@@ -209,7 +221,7 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Перезапуск DNS-сервера](image/23.jpg)
+![Перезапуск DNS-сервера](image/23.png)
 :::
 ::: {.column width="50%"}
 
@@ -227,7 +239,7 @@ header-includes:
 :::
 ::: {.column width="50%"}
 
-![Формирование ключа](image/24.jpg)
+![Формирование ключа](image/24.png)
 :::
 ::::::::::::::
 
@@ -236,7 +248,7 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![kea-dhcp-ddns.conf](image/25.jpg)
+![kea-dhcp-ddns.conf](image/25.png)
 :::
 ::: {.column width="50%"}
 
@@ -252,7 +264,7 @@ header-includes:
 :::
 ::: {.column width="50%"}
 
-![Запуск dhcp-ddns](image/26.jpg)
+![Запуск dhcp-ddns](image/26.png)
 :::
 ::::::::::::::
 
@@ -261,11 +273,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![kea-dhcp4.conf](image/27.jpg)
+![kea-dhcp4.conf](image/27.png)
 :::
 ::: {.column width="50%"}
 
-![Запуск dhcp](image/28.jpg)
+![Запуск dhcp](image/28.png)
 :::
 ::::::::::::::
 
@@ -273,11 +285,11 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Переполучение адреса](image/29.jpg)
+![Переполучение адреса](image/29.png)
 :::
 ::: {.column width="50%"}
 
-![edzhibitskaya.net.jnl](image/30.jpg)
+![ankomyagin.net.jnl](image/30.png)
 
 :::
 ::::::::::::::
@@ -290,7 +302,7 @@ header-includes:
 :::
 ::: {.column width="40%"}
 
-![Запись о клиенте](image/37.jpg)
+![Запись о клиенте](image/37.png)
 
 :::
 ::::::::::::::
@@ -298,11 +310,11 @@ header-includes:
 ## Сохранение изменений
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
-![Каталог DHCP](image/32.jpg)
+![Каталог DHCP](image/32.png)
 :::
 ::: {.column width="50%"}
 
-![Замена файлов](image/33.jpg)
+![Замена файлов](image/33.png)
 
 :::
 ::::::::::::::
@@ -311,10 +323,10 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Создание файла](image/34.jpg)
+![Создание файла](image/34.png)
 :::
 ::: {.column width="50%"}
-![Файл dhcp.sh](image/35.jpg)
+![Файл dhcp.sh](image/35.png)
 
 :::
 ::::::::::::::
@@ -323,7 +335,7 @@ header-includes:
 :::::::::::::: {.columns align=center}
 ::: {.column width="50%"}
 
-![Выключение](image/35.jpg)
+![Выключение](image/35.png)
 
 :::
 ::::::::::::::
