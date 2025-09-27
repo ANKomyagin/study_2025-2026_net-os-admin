@@ -1,2 +1,3 @@
 /.quarto/
 /_report/
+**/*.quarto_ipynb
