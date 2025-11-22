@@ -1,18 +1,18 @@
 ---
-## Front matter
+# Front matter
 title: "Лабораторная работа №2"
 subtitle: "Дисциплина: Администрирование сетевых подсистем"
-author: "Жибицкая Евгения Дмитриевна"
+author: "Комягин Андрей Андреевич"
 
-## Generic otions
+# Generic options
 lang: ru-RU
 toc-title: "Содержание"
 
-## Bibliography
+# Bibliography
 bibliography: bib/cite.bib
 csl: pandoc/csl/gost-r-7-0-5-2008-numeric.csl
 
-## Pdf output format
+# Pdf output format
 toc: true # Table of contents
 toc-depth: 2
 lof: true # List of figures
@@ -21,7 +21,8 @@ fontsize: 12pt
 linestretch: 1.5
 papersize: a4
 documentclass: scrreprt
-## I18n polyglossia
+
+# I18n polyglossia
 polyglossia-lang:
   name: russian
   options:
@@ -29,10 +30,12 @@ polyglossia-lang:
   - babelshorthands=true
 polyglossia-otherlangs:
   name: english
-## I18n babel
+
+# I18n babel
 babel-lang: russian
 babel-otherlangs: english
-## Fonts
+
+# Fonts
 mainfont: IBM Plex Serif
 romanfont: IBM Plex Serif
 sansfont: IBM Plex Sans
@@ -42,10 +45,11 @@ mainfontoptions: Ligatures=Common,Ligatures=TeX,Scale=0.94
 romanfontoptions: Ligatures=Common,Ligatures=TeX,Scale=0.94
 sansfontoptions: Ligatures=Common,Ligatures=TeX,Scale=MatchLowercase,Scale=0.94
 monofontoptions: Scale=MatchLowercase,Scale=0.94,FakeStretch=0.9
-mathfontoptions:
-## Biblatex
+mathfontoptions: []
+
+# Biblatex
 biblatex: true
-biblio-style: "gost-numeric"
+biblio-style: gost-numeric
 biblatexoptions:
   - parentracker=true
   - backend=biber
@@ -53,297 +57,224 @@ biblatexoptions:
   - language=auto
   - autolang=other*
   - citestyle=gost-numeric
-## Pandoc-crossref LaTeX customization
+
+# Pandoc-crossref LaTeX customization
 figureTitle: "Рис."
 tableTitle: "Таблица"
 listingTitle: "Листинг"
 lofTitle: "Список иллюстраций"
 lotTitle: "Список таблиц"
 lolTitle: "Листинги"
-## Misc options
+
+# Misc options
 indent: true
 header-includes:
   - \usepackage{indentfirst}
-  - \usepackage{float} # keep figures where there are in the text
-  - \floatplacement{figure}{H} # keep figures where there are in the text
+  - \usepackage{float} # keep figures where they are in the text
+  - \floatplacement{figure}{H}
 ---
 
 # Цель работы
 
-
-Приобретение навыков по установке и конфигурированию DNS-сервера, усвоение принципов работы системы доменных имён на ОС Rocky linux.
+Приобретение практических навыков по установке и конфигурированию DNS-сервера, усвоение принципов работы системы доменных имён.
 
 # Выполнение лабораторной работы
 
-Для начала загружаем операционную систему, перейдся в каталог Vagrant(рис. [-@fig:001]).
+## Подготовка среды
 
-![Загрузка ОС](image/1.jpg){#fig:001 width=70%}
+Работа выполняется на виртуальной машине `server`.
+Был произведен запуск виртуальной машины и вход в систему (рис. [-@fig:001], [-@fig:002]).
 
+![Запуск виртуальной машины](image/1.png){#fig:001 width=70%}
 
-Открываем терминал, переходим в режим суперпользователя и устанавливаем bind, bind-utils(рис. [-@fig:002]).
+![Вход в систему и переход в режим суперпользователя](image/2.png){#fig:002 width=70%}
 
-![bind, bind-utils](image/2.jpg){#fig:002 width=70%}
+## Установка DNS-сервера
 
-Затем в качетсве тренировки делаем запрос к DNS-адресу Яндекса(рис. [-@fig:003]).
+На сервере были установлены пакеты `bind` и `bind-utils`, необходимые для работы DNS-сервера и утилит диагностики (рис. [-@fig:003]).
 
-![Запрос к DNS-адресу Яндекса](image/3.jpg){#fig:003 width=70%}
+Команда установки:
 
-Затем просмотрим содержимое  файлов /etc/resolv.conf,
-/etc/named.conf, /var/named/named.ca, /var/named/named.localhost,
-/var/named/named.loopback.
+```bash
+dnf -y install bind bind-utils
+```
 
-В файле /etc/resolv.conf указано к каким DNS-серверам обращаться для преобразования доменных имен в IP-адреса и наоборот(рис. [-@fig:004]).
+![Установка пакетов bind](image/3.png){#fig:003 width=70%}
 
-![Файл /etc/resolv.conf](image/4.jpg){#fig:004 width=70%}
+## Конфигурирование кэширующего DNS-сервера
 
+Для анализа работы DNS были выполнены запросы к внешнему узлу (yandex.ru) и к локальному серверу.
+На этапе до настройки локальный сервер (127.0.0.1) не отвечал на запросы или возвращал ошибку (рис. [-@fig:004]).
 
+Использованные команды:
 
-/etc/named.conf главный конфигурационный файл демона BIND (named). Он определяет общие параметры работы DNS-сервера, зоны, которые он обслуживает, и политики доступа(рис. [-@fig:005]).
+```bash
+dig www.yandex.ru
+dig @127.0.0.1 www.yandex.ru
+```
 
-![Файл /etc/named.conf](image/5.jpg){#fig:005 width=70%}
+![Диагностика DNS с помощью dig](image/4.png){#fig:004 width=70%}
 
+Далее был настроен сетевой интерфейс `eth0` через `nmcli` для использования локального DNS-сервера (127.0.0.1) в качестве основного (рис. [-@fig:005]).
 
-/var/named/named.ca содержит список IP-адресов корневых DNS-серверов (root hints). Когда  DNS-сервер не знает, куда направить запрос для какого-либо домена, он начинает поиск с этих корневых серверов
+Команды настройки:
 
+```bash
+nmcli connection edit eth0
+remove ipv4.dns
+set ipv4.ignore-auto-dns yes
+set ipv4.dns 127.0.0.1
+save
+quit
+systemctl restart NetworkManager
+```
 
-/var/named/named.localhost -  это файл прямой зоны для домена localhost. Он сопоставляет имя localhost с IP-адресом 127.0.0.1
+![Настройка NetworkManager](image/5.png){#fig:005 width=70%}
 
-/var/named/named.loopback - это файл обратной зоны (reverse zone) для сетей IPv4 и IPv6. Он выполняет обратное преобразование: по IP-адресу 127.0.0.1 находит имя localhost(рис. [-@fig:006]).
+В файл конфигурации `/etc/named.conf` были внесены изменения:
 
-![Файлы named.localhost и named.loopback ](image/6.jpg){#fig:006 width=70%}
+1.  В директиве `listen-on port 53` добавлен адрес `any` или `127.0.0.1; 192.168.0.1;`.
 
-Затем запустим DNS-сервер, включим его автозапуск(рис. [-@fig:007]).
+2.  В директиве `allow-query` разрешены запросы из локальной сети (`192.168.0.0/16`).
 
-![Запуск сервера ](image/7.jpg){#fig:007 width=70%}
+Также был настроен межсетевой экран (`firewalld`) для разрешения работы службы DNS (рис. [-@fig:006]).
 
-Проанализируем вывод команд dig www.yandex.ru и dig @127.0.0.1 www.yandex.ru(рис. [-@fig:008]). Вторая команда дает больший вывод, так как в ней мы еще указываем к какому серверу обращаться, она помогает в отладкеи диагностике конфигурации
+Команды настройки firewall:
 
-![Dig www.yandex.ru ](image/8.jpg){#fig:008 width=70%}
+```bash
+firewall-cmd --add-service=dns
+firewall-cmd --add-service=dns --permanent
+```
 
-Далее сделаем DNS-сервер сервером по умолчанию для хоста server и внутренней виртуальной сети, изменим настройки сетевого соединения eth0
-в NetworkManager, переключив его на работу с внутренней сетью и указав для него в качестве DNS-сервера по умолчанию адрес 127.0.0. Перезапускаем менеджер, проверяем наличие изменений (рис. [-@fig:009]).
+![Настройка Firewall и редактирование named.conf](image/6.png){#fig:006 width=70%}
 
-![Настройка соединения ](image/9.jpg){#fig:009 width=70%}
+## Конфигурирование первичного DNS-сервера
 
+Согласно заданию, была создана прямая зона `ankomyagin.net` (в примере методички `user.net`) и обратная зона.
 
-Также настраиваем направление DNS-запросов от всех узлов внутренней сети,
-включая запросы от узла server, через узел server. Для этого редактируем  файл /etc/named.conf(рис. [-@fig:010]).
+1.  В `named.conf` добавлено включение файла зон.
+2.  Созданы файлы зон в каталоге `/var/named/`:
+    *   Скопирован шаблон `named.localhost` для прямой зоны.
+    *   Скопирован шаблон `named.loopback` для обратной зоны.
+3.  В файлах зон настроены SOA-записи, NS-записи и A-записи, указывающие на IP-адрес сервера (192.168.x.x).
+4.  Выставлены корректные права доступа и метки SELinux:
+    
+```bash
+    chown -R named:named /var/named
+    restorecon -vR /var/named
+    ```
 
-![Настройка направления запросов ](image/10.jpg){#fig:010 width=70%}
+## Автоматизация настройки (Provisioning)
 
+Для автоматизации процесса настройки создан скрипт `dns.sh` для Vagrant.
 
-Вносим изменения в настройки межсетевого экрана узла server, убеждаемся, что DNS-запросы идут через узел server(рис. [-@fig:011]).
+Листинг скрипта `dns.sh`:
 
-![Firewall ](image/11.jpg){#fig:011 width=70%}
+```bash
+#!/bin/bash
 
-В ситуации, когда DNS-запросы от сервера фильтруются сетевым оборудованием, следует добавить перенаправление DNS-запросов
-на конкретный вышестоящий DNS-сервер. Для этого в конфигурационный файл
-named.conf в секцию options добавим данные, предварительно посмотрев их на локальном хосте (рис. [-@fig:012]).
+echo "Provisioning script $0"
 
-![Редактирование named.conf](image/12.jpg){#fig:012 width=70%}
+echo "Install needed packages"
+dnf -y install bind bind-utils
 
+echo "Copy configuration files"
+# Копирование заранее подготовленных конфигов
+cp -R /vagrant/provision/server/dns/etc/* /etc
+cp -R /vagrant/provision/server/dns/var/named/* /var/named
 
-Далее копируем шаблон описания DNS-зон named.rfc1912.zones из каталога /etc в каталог /etc/named и переименовываем его(рис. [-@fig:013]).
+chown -R named:named /etc/named
+chown -R named:named /var/named
 
-![Перемещение файла](image/13.jpg){#fig:013 width=70%}
+restorecon -vR /etc
+restorecon -vR /var/named
 
-Включим файл описания зоны /etc/named/user.net в конфигурационном файле
-DNS /etc/named.conf(рис. [-@fig:014]), отредактируем  файл /etc/named/edzhibitskaya.net(рис. [-@fig:015]).
+echo "Configure firewall"
+firewall-cmd --add-service=dns
+firewall-cmd --add-service=dns --permanent
 
-![/etc/named.conf](image/14.jpg){#fig:014 width=70%}
+echo "Tuning SELinux"
+setsebool named_write_master_zones 1
+setsebool -P named_write_master_zones 1
 
-![/etc/named/edzhibitskaya.net](image/15.jpg){#fig:015 width=70%}
+echo "Change dns server address"
+nmcli connection edit "System eth0" <<EOF
+remove ipv4.dns
+set ipv4.ignore-auto-dns yes
+set ipv4.dns 127.0.0.1
+save
+quit
+EOF
 
-В каталоге /var/named создаем подкаталоги master/fz и master/rz, в которых будут располагаться файлы прямой и обратной зоны соответственно, скопируем шаблон прямой DNS-зоны named.localhost и переименуем его в edzhibitskaya.net(рис. [-@fig:016]).
+systemctl restart NetworkManager
 
-![Создание подкаталогов](image/16.jpg){#fig:016 width=70%}
+echo "Start named service"
+systemctl enable named
+systemctl start named
+```
 
-Далее редактируем файл(рис. [-@fig:017]).
+В `Vagrantfile` добавлена секция запуска скрипта:
 
-![edzhibitskaya.net](image/17.jpg){#fig:017 width=70%}
+```ruby
+server.vm.provision "server dns",
+  type: "shell",
+  preserve_order: true,
+  path: "provision/server/dns.sh"
+```
 
+# Контрольные вопросы
 
-Копируем шаблон обратной DNS-зоны named.loopback, переименовываем его в 192.168.1(рис. [-@fig:018]), также редактируем(рис. [-@fig:019]).
+1.  **Что такое DNS?**
 
-![Копирование файла](image/18.jpg){#fig:018 width=70%}
+    DNS (Domain Name System) — распределённая система для получения информации о доменах. Чаще всего используется для получения IP-адреса по имени хоста (компьютера или устройства), получения информации о маршрутизации почты и/или обслуживающих узлах для протоколов в домене.
 
-![192.168.1](image/19.jpg){#fig:019 width=70%}
+2.  **Каково назначение кэширующего DNS-сервера?**
 
+    Кэширующий DNS-сервер получает рекурсивные запросы от клиентов, выполняет их (обращаясь к авторитетным серверам) и сохраняет ответы в локальном кэше для ускорения обработки последующих запросов к тем же именам.
 
-Исправляем права доступа к файлам в каталогах /etc/named
-и /var/named, чтобы демон named мог с ними работать и после изменения
-доступа к конфигурационным файлам named корректно восстановливаем их
-метки в SELinux(рис. [-@fig:020]).
+3.  **Чем отличается прямая DNS-зона от обратной?**
 
-![Права и метки](image/20.jpg){#fig:020 width=70%}
+    Прямая зона служит для преобразования доменных имен в IP-адреса (A, AAAA записи). Обратная зона (обычно в домене `in-addr.arpa`) служит для преобразования IP-адресов в доменные имена (PTR записи).
 
-Еще необходимо проверить состояние переключателей, дать разрешение на запись(рис. [-@fig:021]).
+4.  **В каких каталогах и файлах располагаются настройки DNS-сервера?**
 
-![Переключатели](image/21.jpg){#fig:021 width=70%}
+    Основной файл конфигурации: `/etc/named.conf`.
+    Файлы зон обычно располагаются в `/var/named/`.
 
-В дополнительном терминале запускаем в режиме реального времени расширенный лог системных сообщений и в первом терминале перезапускаем сервер(рис. [-@fig:022]).
+5.  **Что указывается в файле resolv.conf?**
 
-![Перезапуск](image/22.jpg){#fig:022 width=70%}
+    В файле `/etc/resolv.conf` указываются адреса DNS-серверов, к которым должна обращаться система для разрешения имен (`nameserver`), а также домен поиска по умолчанию (`search`, `domain`).
 
+6.  **Какие типы записи описания ресурсов есть в DNS и для чего они используются?**
 
-Для анализа работы DNS-сервера воспользуемся утилитами dig и  host(рис. [-@fig:023]) и (рис. [-@fig:024]), (рис. [-@fig:025]).
+    *   **A**: сопоставление имени IPv4-адресу.
 
-![Описание DNS-зоны с сервера](image/23.jpg){#fig:023 width=70%}
+    *   **AAAA**: сопоставление имени IPv6-адресу.
 
-![host -l; host -a](image/24.jpg){#fig:024 width=70%}
+    *   **NS**: указывает на авторитетный DNS-сервер для зоны.
 
-![host -t](image/25.jpg){#fig:025 width=70%}
+    *   **SOA**: начальная запись зоны (параметры зоны, email администратора, серийный номер).
 
+    *   **CNAME**: каноническое имя (псевдоним).
 
-Наконец, в каталог для внесения изменений в настройки внутреннего окружения добавим необходимые директории(рис. [-@fig:026]), создадим исполняемый файл(рис. [-@fig:027]) и пропишем скрипт(рис. [-@fig:028]).
+    *   **MX**: почтовый шлюз для домена.
 
-![Добавление изменений](image/26.jpg){#fig:026 width=70%}
+    *   **PTR**: обратное соответствие (IP -> имя).
 
+7.  **Для чего используется домен in-addr.arpa?**
 
-![Создание файла](image/27.jpg){#fig:027 width=70%}
+    Специальный домен верхнего уровня, используемый для обратного разрешения DNS (поиск имени по IPv4-адресу).
 
+8.  **Для чего нужен демон named?**
 
-![Скрипт](image/28.jpg){#fig:028 width=70%}
+    `named` (Name Daemon) — это исполняемый файл сервера BIND, который обеспечивает работу службы DNS, прослушивает порт 53 и обрабатывает запросы.
 
-Внесем изменения в Vagrantfile для отработки  скрипта(рис. [-@fig:029]).
+9.  **В чём заключаются основные функции slave-сервера и master-сервера?**
 
-![Vagrantfile](image/29.jpg){#fig:029 width=70%}
+    *   **Master (Primary)**: хранит оригинальные файлы зон, на нем вносятся изменения.
 
-# Ответы на контрольные вопросы
-
-1. Что такое DNS?
-
-Система доменных имён, преобразующая имена в IP-адреса и обратно.
-
-2. Каково назначение кэширующего DNS-сервера?
-
-Кэшировать DNS-запросы для ускорения ответов и снижения сетевой нагрузки.
-
-3. Чем отличается прямая DNS-зона от обратной?
-
-- Прямая: имя → IP
-
-- Обратная: IP → имя
-
-4. В каких каталогах и файлах настройки DNS-сервера?
- 
-- `/etc/named.conf` – главный конфиг
-
-- `/var/named/` – файлы зон (зона.db)
-
-5. Что указывается в файле resolv.conf?
-
-Адреса DNS-серверов для клиента: `nameserver 8.8.8.8`
-
-6. Какие есть типы записей ресурсов?
-
-- A – IPv4 адрес
-
-- AAAA – IPv6 адрес
-
-- CNAME – псевдоним
-
-- MX – почтовый сервер
-
-- NS – DNS-сервер зоны
-
-- PTR – обратная запись (IP → имя)
-
-7. Для чего используется домен in-addr.arpa? 
-
-Для организации обратных зон DNS (поиск имени по IP).
-
-8. Для чего нужен демон named?
-
-Это основная служба DNS-сервера BIND, обрабатывающая запросы.
-
-9. Функции master/slave серверов?
-
-- Master – авторитативный, хранит оригиналы зон
-
-- Slave – резервный, копирует зоны с master
-
-10. Параметры времени обновления зоны? 
-
-- refresh – время обновления
-
-- retry – время повтора при ошибке
-
-- expire – время устаревания
-
-- TTL – время жизни кэша
-
-11. Как защитить зону от скачивания?
-
-Настроить ACL и запретить трансфер зоны для посторонних.
-
-12. Запись для почтовых серверов?
-
-MX (Mail Exchange).
-
-13. Как протестировать DNS?
-
-Команды: `nslookup`, `dig`, `host`.
-
-14. Управление службами?
-
-- systemctl start <служба>
-
-- systemctl stop <служба>
-
-- systemctl restart <служба>
-
-
-15. Просмотр отладочной информации?
-
-journalctl -u <служба>
-
-16. Где хранятся логи?
-
-/var/log/. Просмотр: journalctl, tail -f /var/log/messages
-
-17. Какие файлы использует процесс?
-
-lsof -p <PID>
-
-18. Примеры nmcli:
-
-- nmcli con up eth0
-
-- nmcli con modify eth0 ipv4.addresses "192.168.1.10/24"
-
-19. Что такое SELinux?
-
-Система принудительного контроля доступа, дополняющая стандартные права.
-
-20. Что такое контекст SELinux?
-
-Метка безопасности, определяющая политику доступа для объекта.
-
-21. Как восстановить контекст?
-
-restorecon -Rv /путь/
-
-22. Как создать правила из логов?
-
-audit2allow -a -M модуль
-
-23. Булевый переключатель?
-
-Параметр, который можно включить или выключить для изменения поведения политики.
-
-24. Список переключателей?
-
-getsebool -a
-
-25. Изменение переключателя?
-
-setsebool -P httpd_can_network_connect on
+    *   **Slave (Secondary)**: загружает данные зон с Master-сервера (transfer zone) для обеспечения отказоустойчивости и распределения нагрузки.
 
 # Выводы
 
-В ходе работы были получены навыки по  установке и конфигурированию DNSсервера, усвоены принципы  работы системы доменных имён на ОС Rocky linux.
-
-# Список литературы{.unnumbered}
-
-[ТУИС]{https://esystem.rudn.ru/pluginfile.php/2854732/mod_resource/content/8/002-dns.pdf}
+В ходе выполнения лабораторной работы были приобретены практические навыки по установке и настройке DNS-сервера BIND. Был настроен кэширующий сервер, а также сконфигурирована первичная (master) зона для локального домена и соответствующая ей обратная зона. Изучены утилиты диагностики `dig`, `nmcli`, а также принципы работы с конфигурационными файлами `named.conf` и файлами зон. Создан скрипт для автоматического развертывания конфигурации.
