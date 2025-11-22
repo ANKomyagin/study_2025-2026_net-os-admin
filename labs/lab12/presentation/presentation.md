@@ -132,6 +132,7 @@ chronyc sources
 ```
 
 **Команда статистики**
+
 ```bash
 chronyc tracking
 ```
